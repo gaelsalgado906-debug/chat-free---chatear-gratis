@@ -1,93 +1,135 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>chat</title>
+    <title>Wind UI - Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Plus+Jakarta+Sans', sans-serif; }
         
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        /* Estilo Corner (Bordes extra redondeados) */
+        .ui-corner { border-radius: 2.5rem; }
+        
+        /* Animación suave para el brillo del botón */
+        @keyframes soft-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 20px 10px rgba(16, 185, 129, 0.2); }
+        }
+        .animate-soft { animation: soft-pulse 3s infinite ease-in-out; }
+
+        /* Estilo para el Badge de Creador */
+        .creator-badge {
+            background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 min-h-screen overflow-hidden">
 
-    <nav class="glass sticky top-0 z-50 w-full h-16 flex items-center">
-        <div class="container mx-auto px-6 flex justify-between items-center">
-            <div class="text-xl font-bold text-emerald-600">Wind<span class="text-slate-800">App</span></div>
-            <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
-                <a href="#" class="hover:text-emerald-500 transition-colors">Inicio</a>
-                <a href="#features" class="hover:text-emerald-500 transition-colors">Funciones</a>
-                <a href="#" class="hover:text-emerald-500 transition-colors">Precios</a>
+    <div id="authPanel" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-xl p-6 transition-all duration-1000">
+        <div class="bg-white w-full max-w-md ui-corner p-10 shadow-2xl border border-slate-100 flex flex-col items-center">
+            
+            <div class="w-20 h-20 bg-emerald-500 ui-corner mb-6 flex items-center justify-center shadow-xl shadow-emerald-100">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
             </div>
-            <button class="px-5 py-2 bg-slate-900 text-white text-sm rounded-lg hover:bg-slate-800 transition-all shadow-lg shadow-slate-200">
-                Empezar
+
+            <h1 class="text-3xl font-extrabold text-slate-800 mb-2">Bienvenido</h1>
+            <p class="text-slate-500 text-center mb-8">Crea tu cuenta para acceder al panel principal.</p>
+
+            <div class="w-full space-y-4">
+                <input type="text" id="userInput" 
+                    class="w-full h-14 px-8 ui-corner bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50/50 outline-none transition-all text-slate-700 font-medium" 
+                    placeholder="Escribe tu nombre de usuario...">
+
+                <button onclick="startApp()" 
+                    class="w-full h-14 bg-emerald-500 text-white ui-corner font-bold text-lg hover:bg-emerald-600 transition-all active:scale-95 shadow-lg shadow-emerald-200 animate-soft">
+                    Crear cuenta
+                </button>
+
+                <div class="relative py-4 flex items-center">
+                    <div class="flex-grow border-t border-slate-100"></div>
+                    <span class="px-4 text-[10px] text-slate-400 font-black uppercase tracking-widest">Registrarse con</span>
+                    <div class="flex-grow border-t border-slate-100"></div>
+                </div>
+
+                <button class="w-full h-14 bg-white border border-slate-200 text-slate-600 ui-corner font-semibold flex items-center justify-center gap-3 hover:bg-slate-50 transition-all">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5">
+                    Google Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <main id="webContent" class="opacity-0 transition-opacity duration-1000">
+        <nav class="bg-white/80 backdrop-blur-md sticky top-0 border-b border-slate-100 px-8 py-4 flex justify-between items-center z-50">
+            <div class="flex items-center gap-4">
+                <div id="badgeCreator" class="hidden creator-badge text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">
+                    Creator
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase">Jugador Activo</span>
+                    <span id="playerName" class="text-slate-900 font-extrabold text-lg">---</span>
+                </div>
+            </div>
+            
+            <button class="px-6 py-2 bg-slate-900 text-white ui-corner text-sm font-bold hover:bg-slate-800 transition-colors">
+                Chatear gratis
             </button>
-        </div>
-    </nav>
+        </nav>
 
-    <header class="relative py-20 overflow-hidden">
-        <div class="container mx-auto px-6 text-center">
-            <span class="inline-block px-3 py-1 text-xs font-semibold text-emerald-600 bg-emerald-50 rounded-full mb-4">
-                Nueva actualización 2.0
-            </span>
-            <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 mb-6 tracking-tight">
-                Diseña más rápido con <br> <span class="text-emerald-500">componentes modernos</span>
-            </h1>
-            <p class="max-w-2xl mx-auto text-lg text-slate-600 mb-10">
-                Una biblioteca ligera, minimalista y altamente personalizable para tus proyectos web. Construida sobre Tailwind CSS para una experiencia de desarrollo fluida.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <button class="px-8 py-4 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-all transform hover:-translate-y-1 shadow-xl shadow-emerald-200">
-                    Probar Gratis
-                </button>
-                <button class="px-8 py-4 bg-white text-slate-700 font-semibold rounded-xl border border-slate-200 hover:bg-slate-50 transition-all">
-                    Ver Documentación
-                </button>
-            </div>
-        </div>
-    </header>
+        <section class="p-12 max-w-4xl mx-auto text-center">
+            <h2 class="text-5xl font-black text-slate-900 mb-6">Panel Principal</h2>
+            <p class="text-slate-500 text-xl">Has ingresado correctamente a la plataforma con Wind UI.</p>
+        </section>
+    </main>
 
-    <section id="features" class="py-20 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                <div class="p-8 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-colors group">
-                    <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center mb-6 group-hover:bg-emerald-500 transition-colors">
-                        <svg class="w-6 h-6 text-emerald-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Alta Velocidad</h3>
-                    <p class="text-slate-500 leading-relaxed">Optimizada para cargar en milisegundos y ofrecer una experiencia fluida al usuario.</p>
-                </div>
+    <script>
+        function startApp() {
+            const input = document.getElementById('userInput');
+            const name = input.value.trim();
+            
+            if (name === "") {
+                input.classList.add('border-red-400');
+                return;
+            }
 
-                <div class="p-8 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-colors group">
-                    <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-500 transition-colors">
-                        <svg class="w-6 h-6 text-blue-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Seguridad Total</h3>
-                    <p class="text-slate-500 leading-relaxed">Protocolos de seguridad modernos para proteger los datos de tu aplicación.</p>
-                </div>
+            const authPanel = document.getElementById('authPanel');
+            const webContent = document.getElementById('webContent');
+            const playerName = document.getElementById('playerName');
+            const badge = document.getElementById('badgeCreator');
 
-                <div class="p-8 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-colors group">
-                    <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center mb-6 group-hover:bg-purple-500 transition-colors">
-                        <svg class="w-6 h-6 text-purple-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Diseño Modular</h3>
-                    <p class="text-slate-500 leading-relaxed">Componentes que puedes combinar de cualquier forma para crear páginas únicas.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+            // 1. Asignar nombre
+            playerName.innerText = name;
 
-    <footer class="py-12 border-t border-slate-200 text-center text-slate-400 text-sm">
-        <p>&copy; 2026 Wind UI App. Todos los derechos reservados.</p>
-    </footer>
+            // 2. Verificar si es el creador gaelsalgado906
+            if (name.toLowerCase() === "gaelsalgado906") {
+                badge.classList.remove('hidden');
+                badge.classList.add('inline-block');
+            } else {
+                badge.classList.add('hidden');
+            }
 
-    <script src="main.js"></script>
+            // 3. Animación de transición
+            authPanel.style.opacity = "0";
+            authPanel.style.pointerEvents = "none";
+            
+            setTimeout(() => {
+                authPanel.style.display = "none";
+                document.body.classList.remove('overflow-hidden');
+                webContent.classList.remove('opacity-0');
+                webContent.classList.add('opacity-100');
+            }, 800);
+        }
+
+        // Ejecutar con la tecla Enter
+        document.getElementById('userInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') startApp();
+        });
+    </script>
 </body>
 </html>
